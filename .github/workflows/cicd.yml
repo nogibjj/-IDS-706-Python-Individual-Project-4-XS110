@@ -9,21 +9,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.7,3.8,3.9,3.10.x,3.11]
- 
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Set up Secrets
+      - uses: actions/checkout@v3
+      - name: Set up Environment Variables
         run: |
-          echo "DATABRICKS_HOST=${{ secrets.SERVER_HOSTNAME }}" >> $GITHUB_ENV
-          echo "DATABRICKS_HTTP_PATH=${{  secrets.HTTP_PATH }}" >> $GITHUB_ENV
-          echo "DATABRICKS_TOKEN=${{ secrets.TOKEN }}" >> $GITHUB_ENV
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
       - name: install packages
         run: make install
       - name: lint
@@ -34,17 +24,3 @@ jobs:
         run: make format
       - name: deploy
         run: make deploy
-      - name: Run main script
-        run: python main.py
-      - name: List files
-        run: |
-          pwd
-          ls -R  
-
-      - name: Archive and Upload Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: ml_pipeline-artifacts
-          path: ${{ github.workspace }}/output
-
-
