@@ -25,22 +25,35 @@ Install necessary libraries: flask, requests,openai.
 2. Integrate ChatGPT API:
 Access to the OpenAI API (which includes ChatGPT). Get the API key from OpenAI.
 3. Create the Flask Application:
-Write a Flask app with a simple frontend to input user details (gender, age, goal) in `main.py`. Use the ChatGPT API to generate workout recommendations based on the input.
-4. Build and Run the Flask App Locally:
-Test the application locally to ensure it's working as expected.
+Write a Flask app with a simple frontend to input user details (gender, age, goal) in `main.py`. Use the LLM ChatGPT API to generate workout recommendations based on the input. 
+* key setup: create two html in templates folder, chatgpt api and required packages.
 
-## Running the Program
-Explain how to start the Flask server and access the app. Include any commands needed to run the Docker container if applicable.
+## Running the Flask app
+Here is the link to the app:
 
-## Using the Application
-Input: Guide on how to input gender, age, and fitness goals.
-Output: Description of what kind of recommendations the user can expect.
+In the web app, you will see this page,![Alt text](image-1.png)
+
+if you enter 18 and choose More muscle, the click `get recommentation` button, you should wail a few seconds, the app will give you workout recommentations based on your input
+![Alt text](image-2.png)
 
 ## Deployment
-Details on how the app is deployed using Azure Web App, including any relevant configurations or steps needed for successful deployment.
+To make the project easy to deploy, it is containerized with docker. I create a web app container, then uploaded a docker image in docker hub. 
 
-## DockerHub Repository
-Link to the DockerHub repository hosting your container and instructions on how to pull and run it.
+* Web app
+![Alt text](image-3.png)
+
+* Dockerhub
+
+1. login to Docker Hub in terminal `docker login --username <username>`
+2. build docker image:`docker build -t workoutrecommendation .`
+3. tag the image:`docker tag workoutrecommendation <username>/workoutrecommendation`
+4. Push the image to Docker Hub: `docker push workoutrecommendation`
+
+Built successfully
+![Alt text](image-4.png)
+Push successfully
+![Alt text](image-5.png)
+![Alt text](image-6.png)
 
 ## Video Demo
 Include the YouTube link here. Briefly describe what the video demonstrates.
