@@ -1,61 +1,34 @@
-from databricks import sql
-import os
-from dotenv import load_dotenv
-from tabulate import tabulate
+from flask import Flask, request, render_template
+import requests
 
-# Load environment variables from .env
-load_dotenv()
+app = Flask(__name__)
 
+# Replace 'your_api_key' with your actual OpenAI API key
+OPENAI_API_KEY = 'your_api_key'
+headers = {
+    'Authorization': f'Bearer {OPENAI_API_KEY}',
+    'Content-Type': 'application/json'
+}
 
-def run_query():
-    try:
-        # Replace with your environment variables or provide the actual values
-        server_hostname = os.getenv("DATABRICKS_HOST")
-        http_path = os.getenv("DATABRICKS_HTTP_PATH")
-        access_token = os.getenv("DATABRICKS_TOKEN")
+def get_workout_recommendation(gender, age, goal):
+    prompt = f"Provide a workout recommendation for a {age}-year-old {gender} who wants to {goal}."
+    
+    response = requests.post(
+        'https://api.openai.com/v1/engines/davinci-codex/completions',
+        headers=headers,
+        json={'prompt': prompt, 'max_tokens': 150}
+    )
+    return response.json()['choices'][0]['text']
 
-        # Establish a connection
-        with sql.connect(
-            server_hostname=server_hostname,
-            http_path=http_path,
-            access_token=access_token,
-        ) as connection:
-            # Create a cursor
-            with connection.cursor() as cursor:
-                # Define the SQL query
-                sql_query = """
-                SELECT customerName, COUNT(O.orderNumber) as orderNum
-                FROM customers AS C
-                LEFT JOIN orders AS O ON C.customerNumber = O.customerNumber
-                GROUP BY customerName
-                HAVING customerName IS NOT NULL
-                ORDER BY orderNum DESC
-                LIMIT 10
-                """
-                # Execute the query
-                cursor.execute(sql_query)
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    recommendation = ''
+    if request.method == 'POST':
+        gender = request.form['gender']
+        age = request.form['age']
+        goal = request.form['goal']
+        recommendation = get_workout_recommendation(gender, age, goal)
+    return render_template('index.html', recommendation=recommendation)
 
-                # Fetch the result
-                result = cursor.fetchall()
-
-                # Print the result as a table
-                headers = ["Customer Name", "Order Number"]
-                table = tabulate(result, headers=headers, tablefmt="pretty")
-                print(table)
-                print("Query execution completed.")
-    except Exception as e:
-        print(f"Error: {e}")
-
-    finally:
-        try:
-            # Close cursor and connection
-            cursor.close()
-            connection.close()
-            print("Connection closed.")
-        except NameError:
-            # Handle the case where the cursor or connection was not defined
-            pass
-
-
-if __name__ == "__main__":
-    run_query()
+if __name__ == '__main__':
+    app.run(debug=True)
