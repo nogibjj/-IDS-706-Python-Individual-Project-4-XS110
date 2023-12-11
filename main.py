@@ -1,34 +1,43 @@
-from flask import Flask, request, render_template
-import requests
+from flask import Flask, render_template, request
+from dotenv import load_dotenv
+import openai
+import os
 
 app = Flask(__name__)
 
-# Replace 'your_api_key' with your actual OpenAI API key
-OPENAI_API_KEY = 'your_api_key'
-headers = {
-    'Authorization': f'Bearer {OPENAI_API_KEY}',
-    'Content-Type': 'application/json'
-}
+# Load environment variables
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
+#'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'
 
-def get_workout_recommendation(gender, age, goal):
-    prompt = f"Provide a workout recommendation for a {age}-year-old {gender} who wants to {goal}."
-    
-    response = requests.post(
-        'https://api.openai.com/v1/engines/davinci-codex/completions',
-        headers=headers,
-        json={'prompt': prompt, 'max_tokens': 150}
-    )
-    return response.json()['choices'][0]['text']
-
-@app.route('/', methods=['GET', 'POST'])
+@app.route("/")
 def index():
-    recommendation = ''
-    if request.method == 'POST':
-        gender = request.form['gender']
-        age = request.form['age']
-        goal = request.form['goal']
-        recommendation = get_workout_recommendation(gender, age, goal)
-    return render_template('index.html', recommendation=recommendation)
+    return render_template("index.html")
 
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.route("/submit", methods=['GET', 'POST'])
+def submit():
+    if request.method == 'POST':
+        gender = request.form.get("gender")
+        age = request.form.get("age")
+        goal = request.form.get("goal")
+
+        prompt = (f"I am a {age} year old {gender}. I want to {goal}. "
+                  "Can you provide a workout plan?")
+
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.5,
+            )
+            workout_plan = response.choices[0].message["content"]
+        except Exception as e:
+            workout_plan = f"An error occurred: {str(e)}"
+
+        return render_template("result.html", recommendation=workout_plan)
+
+    # GET request returns the input form
+    return render_template("index.html")
+
+if __name__ == "__main__":
+    app.run(port=8000)
