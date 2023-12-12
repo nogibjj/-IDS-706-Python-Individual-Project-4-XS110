@@ -10,7 +10,8 @@ app = Flask(__name__)
 
 # Load environment variables
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = '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'
+os.getenv("OPENAI_API_KEY")
 
 
 @app.route("/")

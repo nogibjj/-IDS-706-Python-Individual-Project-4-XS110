@@ -2,6 +2,8 @@
 # Individual Project 4: Auto Scaling Flask App Using Any Serverless Platform
 
 ## Workout Recommendation Flask App Using ChatGPT API
+## Video Demo
+[youtube](https://www.youtube.com/watch?v=Q401Mw36r_c)
 
 ## Project Overview
 This project involves creating a web-based application designed to provide personalized workout plans using the advanced capabilities of the ChatGPT API and user-friendly interface. 
@@ -53,8 +55,6 @@ To make the project easy to deploy, it is containerized with docker. I create a 
 4. Push the image to Docker Hub: `docker push <username>/repo`
 
 
-
-## Video Demo
 
 
 
