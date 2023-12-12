@@ -2,13 +2,16 @@ from flask import Flask, render_template, request
 from dotenv import load_dotenv
 import openai
 import os
+import uvicorn
+from asgiref.wsgi import WsgiToAsgi
+
 
 app = Flask(__name__)
 
 # Load environment variables
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
-#'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'
+
 
 @app.route("/")
 def index():
@@ -39,5 +42,6 @@ def submit():
     # GET request returns the input form
     return render_template("index.html")
 
-if __name__ == "__main__":
-    app.run(port=8000)
+asgi_app = WsgiToAsgi(app)
+if __name__ == '__main__':
+    uvicorn.run("uvicorn","main:asgi_app", host="0.0.0.0", port=8000)

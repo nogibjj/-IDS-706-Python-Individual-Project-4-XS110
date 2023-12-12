@@ -42,20 +42,20 @@ To make the project easy to deploy, it is containerized with docker. I create a 
 * Web app
 ![Alt text](image-3.png)
 
+1. login Azure`az login`
+2. webapp `az containerapp up --resource-group Myresource --name recommendationworkout --ingress external --target-port 8000 --source .`
 * Dockerhub
 
 1. login to Docker Hub in terminal `docker login --username <username>`
-2. build docker image:`docker build -t workoutrecommendation .`
-3. tag the image:`docker tag workoutrecommendation <username>/workoutrecommendation`
-4. Push the image to Docker Hub: `docker push workoutrecommendation`
 
-Built successfully
-![Alt text](image-4.png)
-Push successfully
-![Alt text](image-5.png)
-![Alt text](image-6.png)
+2. build docker image:`docker build -t <username>/repo .`
+3. tag the image:`docker tag repo <username>/repo`
+4. Push the image to Docker Hub: `docker push <username>/repo`
+
+
 
 ## Video Demo
-Include the YouTube link here. Briefly describe what the video demonstrates.
+
+
 
 
